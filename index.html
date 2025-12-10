@@ -7,7 +7,7 @@
     <!-- Подключаем CSS -->
     <link rel="stylesheet" href="style.css">
     <!-- Подключаем готические шрифты -->
-    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Garamond:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
@@ -25,9 +25,6 @@
                 <a href="#poster"><i class="fas fa-image"></i> Постер</a>
                 <a href="actors.html"><i class="fas fa-users"></i> Подробнее об актёрах</a>
             </nav>
-            
-            <!-- Эффект витражного дождя -->
-            <div class="matrix-rain"></div>
         </header>
 
         <main>
@@ -147,8 +144,18 @@
                     <img src="https://b1.filmpro.ru/c/79828.jpg" 
                          alt="Постер фильма 'Торжество'. На изображении группа людей в чёрно-белых тонах, атмосфера напряжённая." 
                          class="movie-poster"
-                         width="400">
+                         width="600"
+                         height="800"
+                         loading="lazy">
                     <p class="poster-caption">Официальный постер фильма «Торжество» (1998)</p>
+                </div>
+                
+                <!-- Альтернативные источники изображения на случай проблем -->
+                <div style="display: none;">
+                    <img src="https://upload.wikimedia.org/wikipedia/ru/thumb/6/6f/Festen.jpg/399px-Festen.jpg" 
+                         alt="Альтернативный постер">
+                    <img src="https://m.media-amazon.com/images/M/MV5BMTg5MjkzNDAxN15BMl5BanBnXkFtZTcwNTAwNjYxMQ@@._V1_.jpg" 
+                         alt="Еще один альтернативный постер">
                 </div>
             </section>
 
@@ -162,7 +169,7 @@
                         <span>Страница на Кинопоиске</span>
                     </a>
                     
-                    <a href="https://ru.wikipedia.org/wiki/%D0%A2%D0%BE%D1%80%D0%B6%D0%B5%D1%81%D1%82V%D0%BE_(%D1%84%D0%B8%D0%BB%D1%8C%D0%BC)" target="_blank" class="external-link">
+                    <a href="https://ru.wikipedia.org/wiki/%D0%A2%D0%BE%D1%80%D0%B6%D0%B5%D1%81%D1%82%D0%B2%D0%BE_(%D1%84%D0%B8%D0%BB%D1%8C%D0%BC)" target="_blank" class="external-link">
                         <i class="fas fa-book"></i>
                         <span>Статья в Википедии</span>
                     </a>
@@ -204,8 +211,44 @@
         </footer>
     </div>
 
-    <!-- Небольшой скрипт для плавной прокрутки -->
+    <!-- Небольшой скрипт для исправления мобильных проблем -->
     <script>
+        // Проверяем мобильное устройство
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        if (isMobile) {
+            // Исправляем проблемы с изображением на мобильных
+            const poster = document.querySelector('.movie-poster');
+            if (poster) {
+                // Убираем фиксированные размеры для мобильных
+                poster.removeAttribute('width');
+                poster.removeAttribute('height');
+                poster.style.maxWidth = '100%';
+                poster.style.height = 'auto';
+                
+                // Заменяем источник если текущий не загружается
+                poster.addEventListener('error', function() {
+                    console.log('Основной постер не загрузился, пробуем альтернативный...');
+                    this.src = 'https://upload.wikimedia.org/wikipedia/ru/thumb/6/6f/Festen.jpg/399px-Festen.jpg';
+                    
+                    // Если и альтернативный не загрузится
+                    this.addEventListener('error', function() {
+                        this.src = 'https://m.media-amazon.com/images/M/MV5BMTg5MjkzNDAxN15BMl5BanBnXkFtZTcwNTAwNjYxMQ@@._V1_.jpg';
+                        this.alt = 'Постер фильма Торжество';
+                        this.style.border = '1px solid #c9b386';
+                        this.style.padding = '10px';
+                        this.style.backgroundColor = '#f8f5f0';
+                    });
+                });
+            }
+            
+            // Улучшаем навигацию для мобильных
+            document.querySelectorAll('.cathedral-nav a').forEach(link => {
+                link.style.padding = '12px 15px';
+                link.style.fontSize = '0.9em';
+            });
+        }
+
         // Плавная прокрутка для якорных ссылок
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -244,32 +287,6 @@
                     link.classList.add('active');
                 }
             });
-        });
-
-        // Эффект печатающегося текста для заголовка
-        const title = document.querySelector('.cathedral-header h1');
-        const originalText = title.textContent;
-        title.textContent = '';
-        
-        let charIndex = 0;
-        function typeWriter() {
-            if (charIndex < originalText.length) {
-                title.textContent += originalText.charAt(charIndex);
-                charIndex++;
-                setTimeout(typeWriter, 50);
-            } else {
-                // Добавляем мерцающий курсор после завершения
-                const cursor = document.createElement('span');
-                cursor.className = 'blinking-cursor';
-                cursor.textContent = '|';
-                cursor.style.animation = 'blink 1s infinite';
-                title.appendChild(cursor);
-            }
-        }
-        
-        // Запускаем эффект после загрузки страницы
-        window.addEventListener('load', () => {
-            setTimeout(typeWriter, 500);
         });
     </script>
 </body>
